@@ -14,7 +14,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f9;
+            background: linear-gradient(135deg, #f4f6f9 25%, #e2e8f0 100%);
             color: #333;
             line-height: 1.6;
             display: flex;
@@ -27,13 +27,22 @@
         }
 
         .card {
-            background-color: #fff;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
             border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            width: 48%; /* Largura dos cards */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
             padding: 30px;
             text-align: left;
             overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
         }
 
         .card h1 {
@@ -113,8 +122,8 @@
             list-style-type: none;
             padding: 0;
             margin-top: 20px;
-            max-height: 400px; /* Altura máxima da lista de frases */
-            overflow-y: auto; /* Adiciona barra de rolagem vertical */
+            max-height: 400px;
+            overflow-y: auto;
         }
 
         .phrase {
@@ -176,8 +185,9 @@
 
         .flex-container {
             display: flex;
-            justify-content: space-between; /* Espaço entre os cards */
-            gap: 20px; /* Espaçamento entre os cards */
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
             width: 100%;
             max-width: 1200px;
         }
@@ -189,21 +199,21 @@
             }
 
             .card {
-                width: 100%; /* Cards ocupam 100% da largura em telas pequenas */
+                width: 100%;
             }
         }
 
         /* Estilo para o campo de anotações */
         #notes {
             width: 100%;
-            height: 150px; /* Altura do campo de anotações */
+            height: 150px;
             padding: 15px;
             border: 1px solid #ddd;
             border-radius: 10px;
             font-size: 1.1rem;
             margin-top: 20px;
             outline: none;
-            resize: vertical; /* Permite redimensionar verticalmente */
+            resize: vertical;
             transition: border 0.3s ease, box-shadow 0.3s ease;
         }
 
@@ -332,7 +342,7 @@
             "Mais um momento, por gentileza.",
             "Seu protocolo foi gerado: xxx e encaminhado para o suporte técnico e assim que possível irão entrar em contato por telefone ou e-mail.",
             "Ajudo em algo mais?",
-            "Seu protocolo foi gerado xxx e encaminhado para o suporte técnico e assim que possível entrarão em contato por telefone ou e-mail. Devido a falta de interação este atendimento será encerrado.",
+            "Seu protocolo foi gerado xxx e encaminhado para o suporte técnico e assim que possível entrarão em contato por telefone ou e-mail. Devido a falta de interação este atendimento s[...",
             "Apenas confirmando, os dados para contato permanecem sendo os:",
             "Telefone(s):",
             "E-mail:",

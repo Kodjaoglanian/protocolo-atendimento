@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organização de Frases e Central de Atendimento</title>
+    <style>
+        /* Reset de estilo e configuração do layout */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .card {
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 48%; /* Largura dos cards */
+            padding: 30px;
+            text-align: left;
+            overflow: hidden;
+        }
+
+        .card h1 {
+            font-size: 2rem;
+            color: #1e2a3a;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: #0056b3;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #0056b3;
+            padding-bottom: 5px;
+        }
+
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        ul {
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+
+        ul li {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            color: #555;
+        }
+
+        .highlight {
+            background-color: #e6f0ff;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #0056b3;
+        }
+
+        .step {
+            margin-bottom: 25px;
+        }
+
+        .step-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #0056b3;
+            margin-bottom: 10px;
+        }
+
+        .step-content {
+            padding-left: 20px;
+        }
+
+        #searchBox {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            outline: none;
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #searchBox:focus {
+            border-color: #0056b3;
+            box-shadow: 0 0 5px rgba(0, 86, 179, 0.3);
+        }
+
+        #phrasesList {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 20px;
+            max-height: 400px; /* Altura máxima da lista de frases */
+            overflow-y: auto; /* Adiciona barra de rolagem vertical */
+        }
+
+        .phrase {
+            background-color: #f9fafb;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            font-size: 1.1rem;
+            color: #555;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .phrase:hover {
+            transform: translateY(-5px);
+            background-color: #e6f0ff;
+            cursor: pointer;
+        }
+
+        .copy-btn {
+            background-color: #0056b3;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background-color: #004494;
+        }
+
+        #backToTop {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #0056b3;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            padding: 15px;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        #backToTop.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .flex-container {
+            display: flex;
+            justify-content: space-between; /* Espaço entre os cards */
+            gap: 20px; /* Espaçamento entre os cards */
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        @media (max-width: 768px) {
+            .flex-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .card {
+                width: 100%; /* Cards ocupam 100% da largura em telas pequenas */
+            }
+        }
+
+        /* Estilo para o campo de anotações */
+        #notes {
+            width: 100%;
+            height: 150px; /* Altura do campo de anotações */
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            margin-top: 20px;
+            outline: none;
+            resize: vertical; /* Permite redimensionar verticalmente */
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #notes:focus {
+            border-color: #0056b3;
+            box-shadow: 0 0 5px rgba(0, 86, 179, 0.3);
+        }
+
+        /* Estilo para os créditos */
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #888;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        footer a {
+            color: #0056b3;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="flex-container">
+        <!-- Card 1: Organização de Frases -->
+        <div class="card">
+            <h1>Organização de Frases</h1>
+            <input type="text" id="searchBox" placeholder="Pesquisar por uma frase..." onkeyup="searchPhrases()">
+
+            <ul id="phrasesList">
+                <!-- As frases do LocalStorage serão carregadas aqui -->
+            </ul>
+
+            <div>
+                <input type="text" id="newPhrase" placeholder="Adicionar uma nova frase..." />
+                <button onclick="addPhrase()">Adicionar Frase</button>
+            </div>
+
+            <!-- Campo de anotações -->
+            <textarea id="notes" placeholder="Faça suas anotações aqui..."></textarea>
+        </div>
+
+        <!-- Card 2: Central de Atendimento -->
+        <div class="card">
+            <h1>Central de Atendimento</h1>
+
+            <div class="step">
+                <div class="step-title">1. Início do Atendimento</div>
+                <div class="step-content">
+                    <p>Central de atendimento, {ATENDENTE}, boa tarde. Com quem eu falo, por gentileza?</p>
+                    <p class="highlight">Anote o primeiro nome da pessoa.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-title">2. Descrição do Problema</div>
+                <div class="step-content">
+                    <p>A pessoa vai descrever o que precisa. Ouça com atenção e, se possível, já anote alguns dados.</p>
+                    <p class="highlight">Exemplo: "Meu sistema não está funcionando."</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-title">3. Abertura de Solicitação</div>
+                <div class="step-content">
+                    <p>Certo. Vou abrir uma solicitação e encaminhar para o suporte técnico. Vou precisar de alguns dados, ok?</p>
+                    <p>O senhor(a) é servidor público do estado?</p>
+                    <ul>
+                        <li><strong>Se sim:</strong> Abra no nome.</li>
+                        <li><strong>Se não:</strong> Abra pelo CPF.</li>
+                        <li><strong>Se escola:</strong> Abra no nome da escola.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-title">4. Confirmação de Dados</div>
+                <div class="step-content">
+                    <p>O usuário vai te passar algumas informações. Neste momento, confirme os seguintes campos:</p>
+                    <ul>
+                        <li><strong>Telefone:</strong> Confirme o número de contato.</li>
+                        <li><strong>E-mail:</strong> Confirme o e-mail para recebimento de atualizações.</li>
+                        <li><strong>Descrição do problema:</strong> Repita a descrição para confirmar.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-title">5. Finalização do Chamado</div>
+                <div class="step-content">
+                    <p>Sua solicitação foi encaminhada para o suporte técnico. Assim que possível, entrarão em contato por telefone ou e-mail.</p>
+                    <p>Foi gerado o número de protocolo nº <strong>XXXXXX</strong> e encaminhado para seu e-mail. Deseja anotar?</p>
+                    <p class="highlight">A central de atendimento dispõe de um número de WhatsApp para abertura e consulta de protocolo: <strong>67 3318-3700</strong>. Deseja anotar?</p>
+                    <p>Algo mais que eu possa ajudar?</p>
+                    <p>A Secretaria Executiva de Transformação Digital agradece. Tenha uma boa tarde.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rodapé com créditos -->
+    <footer>
+        Desenvolvido por <a href="https://github.com/Kodjaoglanian" target="_blank">Kodjaoglanian</a>.
+    </footer>
+
+    <!-- Botão de voltar ao topo -->
+    <button id="backToTop" onclick="scrollToTop()">↑</button>
+
+    <script>
+        // Frases fixas que aparecerão inicialmente, caso não existam no LocalStorage
+        const defaultPhrases = [
+            "Poderia informar o CPF/CNPJ ou a Inscrição Estadual da pessoa afetada por gentileza?",
+            "Seu CPF como solicitante por gentileza?",
+            "Qual o horário de preferência para contato do suporte?",
+            "Horário para contato do suporte?",
+            "Poderia informar por gentileza seu CPF como solicitante do chamado.",
+            "Possuí um segundo telefone para contato?",
+            "Aguarde um momento por gentileza.",
+            "Mais um momento, por gentileza.",
+            "Seu protocolo foi gerado: xxx e encaminhado para o suporte técnico e assim que possível irão entrar em contato por telefone ou e-mail.",
+            "Ajudo em algo mais?",
+            "Seu protocolo foi gerado xxx e encaminhado para o suporte técnico e assim que possível entrarão em contato por telefone ou e-mail. Devido a falta de interação este atendimento será encerrado.",
+            "Apenas confirmando, os dados para contato permanecem sendo os:",
+            "Telefone(s):",
+            "E-mail:",
+            "Usuária entrou em contato via chat, solicitando urgência em seu atendimento e um posicionamento do suporte a respeito do incidente. Dados para contato foram confirmados.",
+            "Foi adicionado em seu chamado uma nota solicitando urgência no atendimento, e um posicionamento do suporte a respeito do incidente.",
+            "Possui um segundo telefone para contato?",
+            "Atendimento via chat segue em anexo.",
+            "Poderia me informar por gentileza, seu nome completo e seu CPF, para abertura de incidente?",
+            "Usuária entrou em contato informando",
+            "E qual seria Órgão/Setor que você trabalha, e o horário disponível para contato?",
+            "Para realizar a abertura do Incidente, preciso de alguns dados. Tudo bem?",
+            "Qual seria o sistema utilizado?",
+            "Usuário entrou em contato informando que",
+            "Qual seria o email para contato?",
+            "Recebeu a resolução no email?",
+            "Estarei encaminhando a resolução novamente no email informado, peço para que confirme o recebimento e se atendeu a sua necessidade",
+            "Só aguardar o retorno do suporte técnico, entrarão em contato por email e por telefone"
+        ];
+
+        // Função para carregar as frases do LocalStorage ou usar as frases padrão
+        function loadPhrases() {
+            var phrasesList = document.getElementById("phrasesList");
+            var phrases = JSON.parse(localStorage.getItem("phrases")) || defaultPhrases;
+
+            phrasesList.innerHTML = '';  // Limpar lista atual
+
+            phrases.forEach(function(phrase) {
+                var newLi = document.createElement("li");
+                newLi.classList.add("phrase");
+                newLi.innerHTML = `<span>${phrase}</span><button class="copy-btn" onclick="copyText(this)">Copiar</button>`;
+                phrasesList.appendChild(newLi);
+            });
+        }
+
+        // Função de pesquisa
+        function searchPhrases() {
+            var input = document.getElementById("searchBox").value.toLowerCase();
+            var phrases = document.getElementsByClassName("phrase");
+
+            for (var i = 0; i < phrases.length; i++) {
+                var phrase = phrases[i].textContent || phrases[i].innerText;
+                if (phrase.toLowerCase().indexOf(input) > -1) {
+                    phrases[i].style.display = "";
+                } else {
+                    phrases[i].style.display = "none";
+                }
+            }
+        }
+
+        // Função de copiar texto
+        function copyText(button) {
+            var text = button.previousElementSibling.innerText;
+            
+            var tempInput = document.createElement("input");
+            document.body.appendChild(tempInput);
+            tempInput.value = text;
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+
+            alert("Texto copiado: " + text);
+        }
+
+        // Função para adicionar uma nova frase
+        function addPhrase() {
+            var newPhrase = document.getElementById("newPhrase").value.trim();
+            if (newPhrase !== "") {
+                var phrases = JSON.parse(localStorage.getItem("phrases")) || defaultPhrases;
+                phrases.push(newPhrase);  // Adiciona a nova frase à lista
+
+                // Salva no LocalStorage
+                localStorage.setItem("phrases", JSON.stringify(phrases));
+
+                // Recarrega a lista de frases
+                loadPhrases();
+
+                // Limpar o campo de input
+                document.getElementById("newPhrase").value = "";
+            } else {
+                alert("Por favor, digite uma frase.");
+            }
+        }
+
+        // Função de scroll para o topo
+        window.onscroll = function() {
+            var button = document.getElementById("backToTop");
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                button.classList.add("show");
+            } else {
+                button.classList.remove("show");
+            }
+        };
+
+        function scrollToTop() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+
+        // Carregar as frases ao iniciar a página
+        window.onload = function() {
+            loadPhrases();
+
+            // Carregar anotações salvas
+            var savedNotes = localStorage.getItem("notes");
+            if (savedNotes) {
+                document.getElementById("notes").value = savedNotes;
+            }
+        };
+
+        // Salvar anotações no LocalStorage
+        document.getElementById("notes").addEventListener("input", function() {
+            localStorage.setItem("notes", this.value);
+        });
+    </script>
+
+</body>
+</html>
